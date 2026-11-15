@@ -81,7 +81,7 @@ nonisolated final class ElevatedWindowSpace {
             let setLevel = Self.symbol("CGSSpaceSetAbsoluteLevel", as: SpaceSetLevelFn.self),
             let show = Self.symbol("CGSShowSpaces", as: SpaceVisibilityFn.self)
         else {
-            NSLog("[LocalNook] Elevated space unavailable — using standard window level.")
+            NSLog("[Oriel] Elevated space unavailable — using standard window level.")
             return nil
         }
 
@@ -89,7 +89,7 @@ nonisolated final class ElevatedWindowSpace {
         // The magic 0x1 keeps Finder from redrawing desktop icons onto the space.
         let sid = spaceCreate(cid, 0x1, nil)
         guard sid != 0 else {
-            NSLog("[LocalNook] Elevated space creation failed — using standard window level.")
+            NSLog("[Oriel] Elevated space creation failed — using standard window level.")
             return nil
         }
 
