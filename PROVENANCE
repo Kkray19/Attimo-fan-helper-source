@@ -1,10 +1,10 @@
 Oriel fan helper (formerly LocalNook): where this source tree came from
 
-Repository commit:   617ecf88b5c224a582534269003fc8225e6d284b
-Commit date:         2026-11-16T21:10:21-05:00
-Commit subject:      Lock-screen card: window set up as the one known to run on macOS 27, media wake at every lock, honest 'proven' wording, licence-notice disclosure
+Repository commit:   0da0cf00b7e8d64155806328651241c193c0a794
+Commit date:         2026-11-17T01:19:32-05:00
+Commit subject:      0.5.1 release prep: VERSION 0.5.1, CHANGELOG; AppleScript addressing checked on Finder
 Tagged:              (no tag)
-Oriel version:       0.5.0 (the VERSION file at that commit; not a LocalNook number: Oriel's numbering began again at 0.1.0)
+Oriel version:       0.5.1 (the VERSION file at that commit; not a LocalNook number: Oriel's numbering began again at 0.1.0)
 Helper wire revision: 3 (Sources/LocalNookShared/HelperWire.swift)
 
 Every file in this tree is a tracked file of that commit, byte for byte, except
@@ -23,5 +23,5 @@ Where each part comes from (repository path -> path in this tree):
   scripts/helper-source/{README.md,NOTICE,build-helper.sh,mpl-README.md}
                                                     -> README.md, NOTICE, build-helper.sh, mpl/README.md
 
-Made by: scripts/make-helper-source.sh --commit 617ecf88b5c224a582534269003fc8225e6d284b
+Made by: scripts/make-helper-source.sh --commit 0da0cf00b7e8d64155806328651241c193c0a794
 A tree made from the same commit has the same MANIFEST.sha256.
