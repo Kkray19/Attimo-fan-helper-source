@@ -1,6 +1,6 @@
 //
 //  FanController.swift
-//  LocalNookFanHelper
+//  AttimoFanHelper
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
@@ -13,7 +13,7 @@
 //
 //  ── One owner, on a lease ──────────────────────────────────────────────────
 //
-//  Only one connection holds the fans. Another LocalNook connection asking
+//  Only one connection holds the fans. Another Attimo connection asking
 //  while they are held is told `localNookOtherConnection` and changes
 //  nothing. The owner renews a lease every 2 s; after 7 s without one the
 //  helper hands the fans back (`appGone`). The lease is measured on
@@ -90,7 +90,7 @@
 //
 
 import Foundation
-import LocalNookSMC
+import AttimoSMC
 import os
 
 // MARK: - Ownership files
@@ -253,8 +253,8 @@ final class FanController: @unchecked Sendable {
         case recovering
     }
 
-    private let queue = DispatchQueue(label: "com.localnook.app.fan-helper.controller")
-    private let workQueue = DispatchQueue(label: "com.localnook.app.fan-helper.work")
+    private let queue = DispatchQueue(label: "app.attimo.mac.fan-helper.controller")
+    private let workQueue = DispatchQueue(label: "app.attimo.mac.fan-helper.work")
     private let makeHardware: @Sendable () -> Result<any FanHardware, FanHelperError>
     private let ownership: any FanOwnership
     private let timing: Timing
@@ -688,9 +688,9 @@ final class FanController: @unchecked Sendable {
         let owner: FanOwner
         switch phase {
         case .controlling, .starting:
-            owner = self.owner == id ? .thisConnection : .localNookOtherConnection
+            owner = self.owner == id ? .thisConnection : .attimoOtherConnection
         case .recovering:
-            owner = .localNookOtherConnection
+            owner = .attimoOtherConnection
             reportedError = reportedError ?? .controlFailed
         case .idle:
             let heldElsewhere = lastFans.contains { !$0.isAutomatic }

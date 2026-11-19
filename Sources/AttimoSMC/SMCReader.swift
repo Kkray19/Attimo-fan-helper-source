@@ -1,6 +1,6 @@
 //
 //  SMCReader.swift
-//  LocalNook
+//  Attimo
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
@@ -42,7 +42,7 @@
 //  reply, and temperatures and fans while the helper holds the fans (the
 //  watchdog, the Cool preset, a write read back) or a closed-lid sleep hold
 //  (the chip-temperature guard). The app reads the
-//  controller through its own client (LocalNookSensors' SMCConnection), only while
+//  controller through its own client (AttimoSensors' SMCConnection), only while
 //  Settings ▸ Widgets ▸ "Temperatures and fan speeds" is on and a view is
 //  showing the readings.
 //

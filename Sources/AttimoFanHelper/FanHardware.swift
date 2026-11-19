@@ -1,6 +1,6 @@
 //
 //  FanHardware.swift
-//  LocalNookFanHelper
+//  AttimoFanHelper
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
@@ -10,14 +10,14 @@
 //  root and without touching a fan.
 //
 //  The real conformer joins three things over one read-only SMCReader: the
-//  writer (SMCFanWriter, the only SMC writes), and LocalNookSMC's
+//  writer (SMCFanWriter, the only SMC writes), and AttimoSMC's
 //  ThermalReader for the temperature the watchdog and the Cool preset follow.
 //  All of it is used from one queue at a time — the controller's, or its
 //  work queue while a start runs, never both at once.
 //
 
 import Foundation
-import LocalNookSMC
+import AttimoSMC
 
 protocol FanHardware: AnyObject, Sendable {
     /// Every fan as the controller reports it now; empty when any cannot be

@@ -1,6 +1,6 @@
 //
 //  main.swift
-//  LocalNookFanHelper
+//  AttimoFanHelper
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
@@ -9,21 +9,21 @@
 //  commit e4f9432), Copyright (C) 2026 Vorssaint, GPL-3.0-or-later.
 //  Modified for LocalNook by Krish Kowli, 2026.
 //
-//  The root fan helper: the only code in LocalNook that runs as root, the
+//  The root fan helper: the only code in Attimo that runs as root, the
 //  only code that writes to the Mac's sensor controller, and — since
-//  2026-10-06, at the user's request — the one way LocalNook keeps a Mac
+//  2026-10-06, at the user's request — the one way Attimo keeps a Mac
 //  running with its lid closed (SleepHoldController.swift), by running
 //  `pmset disablesleep 1` and `0` and nothing else.
 //
 //  launchd starts it from /Library/PrivilegedHelperTools, where one
-//  administrator prompt put it after checking its signature: when LocalNook
+//  administrator prompt put it after checking its signature: when Attimo
 //  sends it a message, while the fans' marker or the sleep hold's record
 //  exists, and once when the job is loaded — at install and at every boot
 //  (RunAtLoad). That boot-time run restores anything a marker or a record
 //  says is held — sleep above all, which a boot does not reset — and exits
 //  ten seconds later (see LaunchdPlistCheck). It serves five calls —
 //  status, apply, heartbeat, restore for the fans; sleepHold for the lid —
-//  to an app signed as com.localnook.app by the very certificate the helper
+//  to an app signed as app.attimo.mac by the very certificate the helper
 //  is signed with, and nothing else.
 //
 //  Startup, in order, and why:
@@ -40,7 +40,7 @@
 //                       holding the Mac awake means restoring sleep.
 //    no certificate     an ad-hoc helper has nothing to pin the app to, so
 //                       it never listens; it exits once nothing is held.
-//    listen             pinned to `identifier "com.localnook.app"` and the
+//    listen             pinned to `identifier "app.attimo.mac"` and the
 //                       helper's own signer: `certificate leaf = H"<own
 //                       leaf SHA-1>"`, or its team when it is Developer ID
 //                       (CodeSigningPin), validated before NSXPC sees it
@@ -52,7 +52,7 @@
 //
 
 import Foundation
-import LocalNookSMC
+import AttimoSMC
 import os
 
 if CommandLine.arguments.contains("--self-test") {
@@ -65,7 +65,7 @@ if let flag = CommandLine.arguments.firstIndex(of: "--verify-plist") {
 }
 
 guard geteuid() == 0 else {
-    FileHandle.standardError.write(Data("LocalNookFanHelper: runs as root, started by launchd; nothing done.\n".utf8))
+    FileHandle.standardError.write(Data("AttimoFanHelper: runs as root, started by launchd; nothing done.\n".utf8))
     exit(78)
 }
 
@@ -75,7 +75,7 @@ enum HelperDaemon {
     private static let log = Logger(subsystem: FanHelperIdentity.label, category: "main")
     /// Where "is everything idle?" is asked: never from either controller's
     /// own queue, which each check takes in turn.
-    private static let lifetime = DispatchQueue(label: "com.localnook.app.fan-helper.lifetime")
+    private static let lifetime = DispatchQueue(label: "app.attimo.mac.fan-helper.lifetime")
 
     static func run() -> Never {
         // Either controller going idle asks both, on the lifetime queue:
@@ -148,7 +148,7 @@ enum HelperDaemon {
             controller.sleepNotificationsUnavailable()
         }
 
-        let signalQueue = DispatchQueue(label: "com.localnook.app.fan-helper.signals")
+        let signalQueue = DispatchQueue(label: "app.attimo.mac.fan-helper.signals")
         let signals = [SIGTERM, SIGINT].map { number -> DispatchSourceSignal in
             signal(number, SIG_IGN)
             let source = DispatchSource.makeSignalSource(signal: number, queue: signalQueue)

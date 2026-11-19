@@ -1,6 +1,6 @@
 //
 //  ThermalCatalog.swift
-//  LocalNook
+//  Attimo
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
@@ -507,7 +507,7 @@ public struct ThermalDiagnostics: Sendable, Equatable {
 /// serial queue at a time, never the main one. ThermalSampler wraps one in
 /// its own queue; the fan helper uses one on its controller's. (Since
 /// 2026-10-09 this library is the helper's only; the app has its own reader
-/// in LocalNookSensors.)
+/// in AttimoSensors.)
 public final class ThermalReader: @unchecked Sendable {
     private let smc: any SMCKeyReading
     public let generation: Int?
@@ -645,7 +645,7 @@ public final class ThermalReader: @unchecked Sendable {
 /// never the main thread — the caller hops to main to publish.
 public final class ThermalSampler: @unchecked Sendable {
     private let reader: ThermalReader
-    private let queue = DispatchQueue(label: "com.localnook.app.thermals", qos: .utility)
+    private let queue = DispatchQueue(label: "app.attimo.mac.thermals", qos: .utility)
 
     /// The real controller, or nil when AppleSMC will not open. `interval`
     /// is how often the caller means to sample.

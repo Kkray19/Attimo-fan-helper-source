@@ -1,6 +1,6 @@
 //
 //  LaunchdPlistCheck.swift
-//  LocalNookFanHelper
+//  AttimoFanHelper
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
@@ -18,11 +18,11 @@
 //  is the job below, key for key. Anything else and the install stops.
 //
 //  The release build asks the same of the template it ships, so this and
-//  Resources/com.localnook.app.fan-helper.plist cannot drift apart.
+//  Resources/app.attimo.mac.fan-helper.plist cannot drift apart.
 //
 
 import Foundation
-import LocalNookSMC
+import AttimoSMC
 
 enum LaunchdPlistCheck {
     /// The job. KeepAlive relaunches the helper after an unsuccessful exit,
@@ -78,7 +78,7 @@ enum LaunchdPlistCheck {
     /// saying so on standard error.
     static func run(path: String) -> Int32 {
         guard verify(path: path) else {
-            FileHandle.standardError.write(Data("LocalNookFanHelper: \(path) is not the fan helper's launchd job\n".utf8))
+            FileHandle.standardError.write(Data("AttimoFanHelper: \(path) is not the fan helper's launchd job\n".utf8))
             return 1
         }
         return 0

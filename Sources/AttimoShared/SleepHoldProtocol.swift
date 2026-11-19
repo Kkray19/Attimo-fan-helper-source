@@ -1,9 +1,9 @@
 //
 //  SleepHoldProtocol.swift
-//  LocalNook
+//  Attimo
 //
 //  Copyright (C) 2026 Krish Kowli
-//  Licensed under the MIT License. See LICENSES/MIT-LocalNookShared.txt.
+//  Licensed under the MIT License. See LICENSES/MIT-AttimoShared.txt.
 //
 //  Moved from LocalNookSMC to LocalNookShared (GPL boundary, 2026-10-08):
 //  the owner's own code, linked by the app and by the root helper. Edited
@@ -62,7 +62,7 @@ public enum SleepHoldReleaseCause: String, Codable, Sendable, Equatable {
     case sessionEnded
     /// The person switched "Keep running with the lid closed" off.
     case switchedOff
-    /// LocalNook is quitting.
+    /// Attimo is quitting.
     case appQuitting
 }
 
@@ -99,9 +99,9 @@ public struct SleepHoldRequest: Codable, Sendable, Equatable {
 public enum SleepHoldOwner: String, Codable, Sendable, Equatable {
     case nobody
     case thisConnection
-    /// Another LocalNook connection: a second copy, or one from before a
+    /// Another Attimo connection: a second copy, or one from before a
     /// relaunch.
-    case localNookOtherConnection
+    case attimoOtherConnection = "localNookOtherConnection"
 }
 
 /// Why a hold ended.
@@ -110,7 +110,7 @@ public enum SleepHoldEndReason: String, Codable, Sendable, Equatable {
     case sessionEnded, switchedOff, appQuitting
     /// The person chose "Sleep now".
     case sleepNow
-    /// No renewal within the lease, or the connection closed: LocalNook quit,
+    /// No renewal within the lease, or the connection closed: Attimo quit,
     /// crashed or hung.
     case appGone
     /// The helper is being stopped (SIGTERM: an update, a removal, a
@@ -151,10 +151,10 @@ public struct SleepHoldEnd: Codable, Sendable, Equatable {
 /// Why a request was refused.
 public enum SleepHoldError: String, Codable, Sendable, Equatable, Error {
     case invalidRequest
-    /// SleepDisabled already reads 1, and LocalNook did not set it.
+    /// SleepDisabled already reads 1, and Attimo did not set it.
     case otherAppHolds
-    /// Another LocalNook connection holds it.
-    case localNookOtherConnection
+    /// Another Attimo connection holds it.
+    case attimoOtherConnection = "localNookOtherConnection"
     case onBattery, batteryLow, lowPowerMode
     case thermalPressure, tooHot
     /// No temperature reading: the heat cut-off could not be kept.

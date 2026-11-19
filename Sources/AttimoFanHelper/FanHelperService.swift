@@ -1,6 +1,6 @@
 //
 //  FanHelperService.swift
-//  LocalNookFanHelper
+//  AttimoFanHelper
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
@@ -13,7 +13,7 @@
 //  delegate that hands each connection its session.
 //
 //  Who may connect is decided before any of this runs. main.swift sets the
-//  listener's code-signing requirement — `identifier "com.localnook.app"`
+//  listener's code-signing requirement — `identifier "app.attimo.mac"`
 //  and the SHA-1 of the certificate the helper itself is signed with — and
 //  NSXPC checks it against the caller's audit token, not its process ID.
 //  The self-test drives these same classes through an anonymous listener,
@@ -27,7 +27,7 @@
 //
 
 import Foundation
-import LocalNookSMC
+import AttimoSMC
 
 final class FanHelperSession: NSObject, FanHelperXPC, @unchecked Sendable {
     let id = UUID()

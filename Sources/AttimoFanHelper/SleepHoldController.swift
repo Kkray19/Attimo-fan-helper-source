@@ -1,6 +1,6 @@
 //
 //  SleepHoldController.swift
-//  LocalNookFanHelper
+//  AttimoFanHelper
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
@@ -33,7 +33,7 @@
 //  would then clear as its own; another app's 1 landing between its pmset 0
 //  and its first sight of that 0, which it would clear again on a retry;
 //  and another app's 1 made after a helper died holding, which the next
-//  start clears, since the record still says the 1 is LocalNook's.
+//  start clears, since the record still says the 1 is Attimo's.
 //
 //  ── The record ─────────────────────────────────────────────────────────────
 //
@@ -47,7 +47,7 @@
 //  reads 0, which early in a boot can mean only that powerd has not yet
 //  re-applied the stored 1.
 //
-//  A release is confirmed only once, after LocalNook's pmset 0, the kernel
+//  A release is confirmed only once, after Attimo's pmset 0, the kernel
 //  has read 0 — not merely nothing, which is what it says before powerd
 //  publishes at boot — and the stored setting has read 0, since pmset exits
 //  0 even when its write failed. Each is counted once seen, so another
@@ -97,7 +97,7 @@
 //
 
 import Foundation
-import LocalNookSMC
+import AttimoSMC
 import os
 
 // MARK: - When to end
@@ -223,8 +223,8 @@ final class SleepHoldController: @unchecked Sendable {
         case undoStart
     }
 
-    private let queue = DispatchQueue(label: "com.localnook.app.fan-helper.sleep-hold")
-    private let sleepQueue = DispatchQueue(label: "com.localnook.app.fan-helper.sleep-request")
+    private let queue = DispatchQueue(label: "app.attimo.mac.fan-helper.sleep-hold")
+    private let sleepQueue = DispatchQueue(label: "app.attimo.mac.fan-helper.sleep-request")
     private let pmset: any PmsetRunning
     private let registry: any PowerManagementReading
     private let power: any PowerSourceReader
@@ -391,7 +391,7 @@ final class SleepHoldController: @unchecked Sendable {
     private func start(allowBattery: Bool, for id: UUID) -> SleepHoldStatus {
         switch phase {
         case .holding:
-            guard owner == id else { return status(for: id, error: .localNookOtherConnection) }
+            guard owner == id else { return status(for: id, error: .attimoOtherConnection) }
             // The person changed whether it may run on battery.
             allowsBattery = allowBattery
             lastHeartbeat = clock()
@@ -421,7 +421,7 @@ final class SleepHoldController: @unchecked Sendable {
             phase = .recovering
             guard end(.helperRestarted) else { return status(for: id, error: .controlFailed) }
         }
-        // Not LocalNook's — in force, or stored for the next boot: never
+        // Not Attimo's — in force, or stored for the next boot: never
         // taken, never cleared.
         let kernel = registry.sleepDisabled()
         let stored = registry.storedSleepDisabled()
@@ -533,11 +533,11 @@ final class SleepHoldController: @unchecked Sendable {
 
     /// "Sleep now": the hold let go, then the Mac asked to sleep. With
     /// nothing held it still sleeps — what the person asked for — unless
-    /// SleepDisabled reads 1, which is not LocalNook's to clear.
+    /// SleepDisabled reads 1, which is not Attimo's to clear.
     private func sleepNow(for id: UUID) -> SleepHoldStatus {
         switch phase {
         case .holding:
-            guard owner == id else { return status(for: id, error: .localNookOtherConnection) }
+            guard owner == id else { return status(for: id, error: .attimoOtherConnection) }
             return status(for: id, error: end(.sleepNow) ? nil : .controlFailed)
         case .recovering:
             guard retry() else { return status(for: id, error: .controlFailed) }
@@ -645,7 +645,7 @@ final class SleepHoldController: @unchecked Sendable {
     private func status(for id: UUID, error: SleepHoldError? = nil) -> SleepHoldStatus {
         let holding = phase == .holding
         return SleepHoldStatus(
-            owner: holding ? (owner == id ? .thisConnection : .localNookOtherConnection) : .nobody,
+            owner: holding ? (owner == id ? .thisConnection : .attimoOtherConnection) : .nobody,
             recovering: phase == .recovering,
             sleepDisabled: registry.sleepDisabled().enforced,
             allowsBattery: holding && allowsBattery,

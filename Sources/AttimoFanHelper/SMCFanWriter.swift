@@ -1,6 +1,6 @@
 //
 //  SMCFanWriter.swift
-//  LocalNookFanHelper
+//  AttimoFanHelper
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
@@ -10,14 +10,14 @@
 //  Modified for LocalNook by Krish Kowli, 2026.
 //
 //  ─────────────────────────────────────────────────────────────────────────
-//  UNDOCUMENTED INTERFACE — THE ONLY SMC WRITES IN LOCALNOOK
+//  UNDOCUMENTED INTERFACE — THE ONLY SMC WRITES IN ATTIMO
 //  ─────────────────────────────────────────────────────────────────────────
 //
 //  WHY THIS EXISTS
 //  The user asked on 2026-09-25 to set the fan speed from the notch. On
 //  Apple silicon the fans answer only to the System Management Controller,
 //  and the only way to ask it is the same undocumented AppleSMC user client
-//  LocalNookSMC reads through, with one more command: 6, write. The
+//  AttimoSMC reads through, with one more command: 6, write. The
 //  firmware accepts that command for the fan keys from root alone, which is
 //  why this file lives in a root daemon and nowhere else. The block's
 //  layout, the selector (2) and the command numbers, write (6) included, are
@@ -38,12 +38,12 @@
 //  The names are an allowlist built from the fan count (`FNum`, at most 8)
 //  and checked on every write; the write port checks the fixed superset
 //  again. A write to anything else is a `precondition` failure, not an
-//  error to handle. Reads for verification go through LocalNookSMC's
+//  error to handle. Reads for verification go through AttimoSMC's
 //  read-only SMCReader; this file's own connection sends command 6 only.
 //
 //  RISK
 //  An undocumented ABI can change under an OS update. The parameter block
-//  must have exactly the layout LocalNookSMC verified, or the port refuses
+//  must have exactly the layout AttimoSMC verified, or the port refuses
 //  to open. Every write checks both the kernel's return and the
 //  controller's own result byte, every change is read back, and anything
 //  that does not stick hands the fans back to macOS rather than trying
@@ -52,7 +52,7 @@
 
 import Foundation
 import IOKit
-import LocalNookSMC
+import AttimoSMC
 
 // MARK: - The allowlist
 
@@ -177,7 +177,7 @@ final class SMCFanWriter: @unchecked Sendable {
         self.clock = clock
     }
 
-    /// The real controller: LocalNookSMC's reader for reads, this file's
+    /// The real controller: AttimoSMC's reader for reads, this file's
     /// port for writes. Fails when AppleSMC will not open, the Mac has no
     /// fan, or its fan keys are not the ones this file knows how to write.
     static func connect(reader: any SMCKeyReading) -> Result<SMCFanWriter, FanHelperError> {
@@ -519,14 +519,14 @@ final class SMCFanWriter: @unchecked Sendable {
 // MARK: - AppleSMC, command 6
 
 /// The helper's own connection to AppleSMC, for writes alone. Private to
-/// this file: nothing else in LocalNook can build a write.
+/// this file: nothing else in Attimo can build a write.
 private final class AppleSMCWritePort: SMCWritePort {
     private static let selector: UInt32 = 2
     private static let commandWrite: UInt8 = 6
     private var connection: io_connect_t = 0
 
     /// The parameter block as laid out here, which must match what
-    /// LocalNookSMC verified on real hardware.
+    /// AttimoSMC verified on real hardware.
     private static var layout: SMCLayout {
         SMCLayout(size: MemoryLayout<WriteParamStruct>.size,
                   stride: MemoryLayout<WriteParamStruct>.stride,

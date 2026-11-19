@@ -1,11 +1,11 @@
 //
 //  HelperSelfTest.swift
-//  LocalNookFanHelper
+//  AttimoFanHelper
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
 //
-//  `LocalNookFanHelper --self-test`: everything about the helper that can be
+//  `AttimoFanHelper --self-test`: everything about the helper that can be
 //  checked without root, without a fan and without touching the Mac's sleep.
 //
 //  The writer runs against a register file that plays the controller — its
@@ -30,18 +30,18 @@
 //
 
 import Foundation
-import LocalNookSMC
+import AttimoSMC
 import ObjectiveC
 
 final class HelperSelfTest {
     private var passed = 0
     private var failed = 0
     let directory = URL(fileURLWithPath: NSTemporaryDirectory())
-        .appendingPathComponent("LocalNookFanHelper-selftest-\(UUID().uuidString)", isDirectory: true)
+        .appendingPathComponent("AttimoFanHelper-selftest-\(UUID().uuidString)", isDirectory: true)
 
     static func run() -> Int32 {
         let test = HelperSelfTest()
-        print("LocalNookFanHelper self-test (no root, no SMC writes, no Mach service)")
+        print("AttimoFanHelper self-test (no root, no SMC writes, no Mach service)")
         test.runAll()
         print(test.failed == 0 ? "helper self-test: \(test.passed) passed"
                                : "helper self-test: \(test.passed) passed, \(test.failed) failed")
@@ -107,12 +107,12 @@ final class HelperSelfTest {
         let pin = CodeSigningPin.requirement(identifier: FanHelperIdentity.appIdentifier,
                                              leafSHA1: String(repeating: "a1", count: 20))
         check("the pin the listener would use compiles, naming the app and the leaf",
-              pin == "identifier \"com.localnook.app\" and certificate leaf = H\"\(String(repeating: "a1", count: 20))\"",
+              pin == "identifier \"app.attimo.mac\" and certificate leaf = H\"\(String(repeating: "a1", count: 20))\"",
               pin ?? "nil")
         let teamPin = CodeSigningPin.requirement(identifier: FanHelperIdentity.appIdentifier,
                                                  signer: .developerID(team: "ABCDE12345"))
         check("a Developer ID helper's pin compiles, naming the app, Apple's Developer ID chain and the team",
-              teamPin == "identifier \"com.localnook.app\" and anchor apple generic"
+              teamPin == "identifier \"app.attimo.mac\" and anchor apple generic"
                   + " and certificate 1[field.1.2.840.113635.100.6.2.6] exists"
                   + " and certificate leaf[field.1.2.840.113635.100.6.1.13] exists"
                   + " and certificate leaf[subject.OU] = \"ABCDE12345\"",
@@ -123,7 +123,7 @@ final class HelperSelfTest {
                   && CodeSigningPin.requirement(identifier: FanHelperIdentity.appIdentifier,
                                                 signer: .developerID(team: "ABCDE1234\"")) == nil)
         check("the helper's identity is one name for label, service and signature",
-              FanHelperIdentity.label == "com.localnook.app.fan-helper"
+              FanHelperIdentity.label == "app.attimo.mac.fan-helper"
                   && FanHelperIdentity.installedBinary.hasSuffix("/" + FanHelperIdentity.label))
         check("power: an idle-sleep query is allowed, will-sleep hands back first",
               SystemPowerWatcher.response(to: 0xE000_0270) == .allow
@@ -137,8 +137,8 @@ final class HelperSelfTest {
 
     // MARK: The wire, against the shared contract
 
-    /// The helper's own encoder and decoder against LocalNookShared's
-    /// `HelperWireContract`, the texts installed revision-3 helpers speak.
+    /// The helper's own encoder and decoder against AttimoShared's
+    /// `HelperWireContract`, the texts revision-4 helpers speak.
     /// The app's suite checks its side against the same strings
     /// (FanWireTests), so a byte moved on either side fails one of them.
     /// Checks only: nothing the helper does changes.
@@ -170,7 +170,7 @@ final class HelperSelfTest {
         let held = FanHelperStatus(mode: .cool, owner: .thisConnection, fans: [fan], hottest: 71.5,
                                    lastHandBack: .tooHot)
         let other = FanHelperStatus(owner: .otherApp, otherController: "Vorssaint", error: .otherAppControls)
-        let fixed = FanHelperStatus(mode: .fixed(level: 85), owner: .localNookOtherConnection)
+        let fixed = FanHelperStatus(mode: .fixed(level: 85), owner: .attimoOtherConnection)
         check("each status is written as the contract has it",
               text(FanHelperStatus()) == C.statusDefault && text(held) == C.statusHeld
                   && text(other) == C.statusOtherApp && text(fixed) == C.statusFixed85,
@@ -185,8 +185,8 @@ final class HelperSelfTest {
 
         // Every case, listed; the switches below stop compiling if a case is
         // added, so the lists cannot fall behind the enumerations.
-        let owners: [FanOwner] = [.system, .thisConnection, .localNookOtherConnection, .otherApp]
-        for owner in owners { switch owner { case .system, .thisConnection, .localNookOtherConnection, .otherApp: break } }
+        let owners: [FanOwner] = [.system, .thisConnection, .attimoOtherConnection, .otherApp]
+        for owner in owners { switch owner { case .system, .thisConnection, .attimoOtherConnection, .otherApp: break } }
         let reasons: [FanHandBackReason] = [.userChose, .appGone, .sleep, .tooHot, .thermalPressure, .systemTookOver,
                                             .otherAppTookOver, .sensorsLost, .helperRestarted, .helperStopping]
         for reason in reasons {
@@ -643,8 +643,8 @@ final class HelperSelfTest {
                                          otherMarkerPath: main.otherMarker, ownerUID: getuid())
         check("the lock is held while the fans are", !intruder.acquire())
         let second = wait { main.controller.apply(request(.fixed(level: 100)), for: b, reply: $0) }
-        check("another LocalNook connection is told the fans are held elsewhere, and changes nothing",
-              second?.owner == .localNookOtherConnection && main.hardware.starts == 1
+        check("another Attimo connection is told the fans are held elsewhere, and changes nothing",
+              second?.owner == .attimoOtherConnection && main.hardware.starts == 1
                   && main.controller.snapshot().level == 50)
         let bogus = wait { main.controller.apply(Data("{\"mode\":{\"fixed\":{\"level\":52}}}".utf8), for: a, reply: $0) }
         check("a level off the 5% grid is an invalid request", bogus?.error == .invalidRequest)
@@ -973,7 +973,7 @@ final class HelperSelfTest {
         }
         let first = sleepHold(.status, on: proxy)
         check("the sleep hold's status crosses the connection, at this revision",
-              first?.owner == .nobody && first?.revision == 3, "\(String(describing: first))")
+              first?.owner == .nobody && first?.revision == 4, "\(String(describing: first))")
         let held = sleepHold(.start(allowBattery: false), on: proxy)
         check("a start crosses it and holds for this connection", held?.isHolding == true
                   && hold.pmset.calls == [true], "\(String(describing: held))")

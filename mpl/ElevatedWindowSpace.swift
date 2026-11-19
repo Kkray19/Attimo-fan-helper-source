@@ -1,6 +1,6 @@
 //
 //  ElevatedWindowSpace.swift
-//  LocalNook
+//  Attimo
 //
 //  ─────────────────────────────────────────────────────────────────────────
 //  THIRD-PARTY / PRIVATE API — OPT-IN ONLY
@@ -14,19 +14,19 @@
 //  Derived from the CGSSpace wrapper in Parrot (https://github.com/avaidyam/Parrot)
 //  by way of boring.notch (https://github.com/TheBoredTeam/boring.notch),
 //  whose copy of the file carries the same MPL-2.0 notice.
-//  Credits: LocalNook's THIRD_PARTY_LICENSES.md (§ 2), or, where this file is
+//  Credits: Attimo's THIRD_PARTY_LICENSES.md (§ 2), or, where this file is
 //  published on its own, the README.md beside it.
 //  ─────────────────────────────────────────────────────────────────────────
 //
 //  WHY THIS EXISTS
 //  A normal `NSWindow.level` cannot place a window above another app's
-//  full-screen space. The private CoreGraphics "Spaces" API can. LocalNook
+//  full-screen space. The private CoreGraphics "Spaces" API can. Attimo
 //  therefore keeps this behind the `notch.useElevatedSpace` setting, OFF by
 //  default. With it off, none of these symbols are ever called and the app
 //  behaves normally — it simply sits below full-screen apps.
 //
 //  RISK: these are unsupported symbols. If a future macOS removes them the
-//  dynamic lookup below fails and LocalNook silently falls back to standard
+//  dynamic lookup below fails and Attimo silently falls back to standard
 //  window levels rather than crashing.
 //
 //  Keeping this wrapper here, and the brightness reader in
@@ -81,7 +81,7 @@ nonisolated final class ElevatedWindowSpace {
             let setLevel = Self.symbol("CGSSpaceSetAbsoluteLevel", as: SpaceSetLevelFn.self),
             let show = Self.symbol("CGSShowSpaces", as: SpaceVisibilityFn.self)
         else {
-            NSLog("[Oriel] Elevated space unavailable — using standard window level.")
+            NSLog("[Attimo] Elevated space unavailable — using standard window level.")
             return nil
         }
 
@@ -89,7 +89,7 @@ nonisolated final class ElevatedWindowSpace {
         // The magic 0x1 keeps Finder from redrawing desktop icons onto the space.
         let sid = spaceCreate(cid, 0x1, nil)
         guard sid != 0 else {
-            NSLog("[Oriel] Elevated space creation failed — using standard window level.")
+            NSLog("[Attimo] Elevated space creation failed — using standard window level.")
             return nil
         }
 

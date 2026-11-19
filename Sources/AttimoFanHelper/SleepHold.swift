@@ -1,6 +1,6 @@
 //
 //  SleepHold.swift
-//  LocalNookFanHelper
+//  AttimoFanHelper
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
@@ -59,7 +59,7 @@
 //      this host) — what pmset writes and powerd re-applies at every boot.
 //      Read through CFPreferences after a synchronize, so never a stale copy.
 //  A start needs the kernel to read 1. A release is confirmed only once
-//  both have read 0 after LocalNook's pmset 0: the kernel alone could be a
+//  both have read 0 after Attimo's pmset 0: the kernel alone could be a
 //  boot that has not re-applied the stored 1 yet, and pmset's exit code
 //  alone a write that failed (SleepHoldController has the rule).
 //
@@ -88,7 +88,7 @@ import Foundation
 import IOKit
 import IOKit.ps
 import IOKit.pwr_mgt
-import LocalNookSMC
+import AttimoSMC
 
 // MARK: - The process
 
@@ -363,7 +363,7 @@ protocol ChipTemperatureReading: AnyObject, Sendable {
     func hottest() -> Double?
 }
 
-/// LocalNookSMC's read-only reader, opened on first use — on the sleep
+/// AttimoSMC's read-only reader, opened on first use — on the sleep
 /// hold's queue, the only one that reads it — and kept. A Mac whose sensor
 /// controller will not open reads nil, and no hold is taken.
 final class SMCChipTemperature: ChipTemperatureReading, @unchecked Sendable {
@@ -400,7 +400,7 @@ final class PowerManagerSleep: SystemSleeping, @unchecked Sendable {
 
 // MARK: - The record
 
-/// The file that says LocalNook set SleepDisabled. Used from the sleep
+/// The file that says Attimo set SleepDisabled. Used from the sleep
 /// hold's queue only.
 protocol SleepHoldRecording: AnyObject {
     /// A record this helper may trust is there.
@@ -414,7 +414,7 @@ protocol SleepHoldRecording: AnyObject {
 /// Root's, private, regular and singly linked, opened without following
 /// links — the fan marker's rules — in /Library/PrivilegedHelperTools,
 /// which a boot does not clear. Anything at the path that is not such a
-/// file is not trusted as LocalNook's, and is left alone.
+/// file is not trusted as Attimo's, and is left alone.
 final class SleepHoldRecordFile: SleepHoldRecording {
     private let path: String
     /// Root in the helper; the self-test's own uid on a temporary file.

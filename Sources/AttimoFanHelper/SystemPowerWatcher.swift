@@ -1,6 +1,6 @@
 //
 //  SystemPowerWatcher.swift
-//  LocalNookFanHelper
+//  AttimoFanHelper
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
@@ -65,7 +65,7 @@ final class SystemPowerWatcher: @unchecked Sendable {
 
     private let controller: FanController
     private let sleepHold: SleepHoldController
-    private let queue = DispatchQueue(label: "com.localnook.app.fan-helper.power")
+    private let queue = DispatchQueue(label: "app.attimo.mac.fan-helper.power")
     private var rootPort: io_connect_t = 0
     private var notifyPort: IONotificationPortRef?
     private var notifier: io_object_t = 0

@@ -1,9 +1,9 @@
 //
 //  HelperWire.swift
-//  LocalNook
+//  Attimo
 //
 //  Copyright (C) 2026 Krish Kowli
-//  Licensed under the MIT License. See LICENSES/MIT-LocalNookShared.txt.
+//  Licensed under the MIT License. See LICENSES/MIT-AttimoShared.txt.
 //
 //  What the app and the root fan helper agree on before either says anything
 //  else: which protocol revision they speak, and how a message is written
@@ -27,8 +27,9 @@ public enum HelperWire {
     /// The protocol revision both sides report and check. Bumped whenever the
     /// helper's behavior or its messages change; the app refuses a helper
     /// reporting any other and offers "Update helper" instead of sending it
-    /// anything. 3 added the sleep hold (2026-10-06).
-    public static let revision = 3
+    /// anything. 3 added the sleep hold (2026-10-06); 4 is the Attimo rename's
+    /// new label, files and pinned app identity, with the messages unchanged.
+    public static let revision = 4
 
     /// The largest request or reply either side will encode or decode.
     public static let maxPayloadBytes = 4096

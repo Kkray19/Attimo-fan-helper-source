@@ -1,11 +1,11 @@
 //
 //  HelperSleepHoldSelfTest.swift
-//  LocalNookFanHelper
+//  AttimoFanHelper
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
 //
-//  The sleep hold's part of `LocalNookFanHelper --self-test`.
+//  The sleep hold's part of `AttimoFanHelper --self-test`.
 //
 //  Nothing here runs pmset or asks the Mac to sleep. The controller runs
 //  against doubles — a pmset that only records what it was asked and moves
@@ -21,7 +21,7 @@
 //
 
 import Foundation
-import LocalNookSMC
+import AttimoSMC
 
 extension HelperSelfTest {
     // MARK: The command and the spawn
@@ -227,8 +227,8 @@ extension HelperSelfTest {
         let (loose, loosePath) = record("loose")
         FileManager.default.createFile(atPath: loosePath, contents: Data("v1\n".utf8),
                                        attributes: [.posixPermissions: 0o644])
-        check("a record others can read is not trusted as LocalNook's", !loose.exists())
-        check("…nor removed as LocalNook's", !loose.remove() && FileManager.default.fileExists(atPath: loosePath))
+        check("a record others can read is not trusted as Attimo's", !loose.exists())
+        check("…nor removed as Attimo's", !loose.remove() && FileManager.default.fileExists(atPath: loosePath))
 
         let (linked, linkedPath) = record("linked")
         let elsewhere = base.appendingPathComponent("elsewhere").path
@@ -312,7 +312,7 @@ extension HelperSelfTest {
         main.controller.connectionOpened(a)
         main.controller.connectionOpened(b)
         let idle = ask(main, .status, as: a)
-        check("idle: nobody holds it, at this revision", idle?.owner == .nobody && idle?.revision == 3
+        check("idle: nobody holds it, at this revision", idle?.owner == .nobody && idle?.revision == 4
                   && idle?.sleepDisabled == false && idle?.recovering == false)
         let held = ask(main, .start(allowBattery: false), as: a)
         check("a start on the adapter holds it for this connection",
@@ -325,11 +325,11 @@ extension HelperSelfTest {
         check("…and SleepDisabled read back from the kernel, through the time powerd takes",
               main.registry.readsWhileLagging > 0)
         let other = ask(main, .start(allowBattery: false), as: b)
-        check("another LocalNook connection is told it is held elsewhere, and nothing more runs",
-              other?.error == .localNookOtherConnection && other?.owner == .localNookOtherConnection
+        check("another Attimo connection is told it is held elsewhere, and nothing more runs",
+              other?.error == .attimoOtherConnection && other?.owner == .attimoOtherConnection
                   && main.pmset.calls == [true])
         let notMine = ask(main, .release(.sessionEnded), as: b)
-        check("…and cannot release it", notMine?.owner == .localNookOtherConnection
+        check("…and cannot release it", notMine?.owner == .attimoOtherConnection
                   && main.controller.snapshot().isHolding)
         var lastBeat: SleepHoldStatus?
         for _ in 0..<8 {
@@ -741,7 +741,7 @@ extension HelperSelfTest {
         FileManager.default.createFile(atPath: foreignRecord.recordPath, contents: Data("v1\n".utf8),
                                        attributes: [.posixPermissions: 0o644])
         foreignRecord.registry.value = true
-        check("a record that is not trusted as LocalNook's is never acted on: no 0 written",
+        check("a record that is not trusted as Attimo's is never acted on: no 0 written",
               foreignRecord.controller.recoverAtLaunch() && foreignRecord.pmset.calls.isEmpty
                   && foreignRecord.registry.value == true)
 
@@ -882,7 +882,7 @@ final class FakeRegistry: PowerManagementReading, @unchecked Sendable {
     var readsWhileLagging: Int { lock.withLock { laggedReads } }
 
     /// Another app's pmset writing the stored setting once `afterKernelReads`
-    /// more kernel reads have been made — landing behind LocalNook's 0, whose
+    /// more kernel reads have been made — landing behind Attimo's 0, whose
     /// own notice still reaches the kernel after it.
     func storedBecomes(_ value: SleepSetting, afterKernelReads: Int) {
         lock.withLock { storedLater = (kernelReads + afterKernelReads, value) }

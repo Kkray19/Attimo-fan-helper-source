@@ -1,6 +1,6 @@
 //
 //  SMCCodec.swift
-//  LocalNook
+//  Attimo
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.

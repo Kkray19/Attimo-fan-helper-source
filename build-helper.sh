@@ -1,13 +1,13 @@
 #!/bin/bash
 #
-# build-helper.sh — build the Oriel root fan helper from this source tree.
+# build-helper.sh — build the Attimo root fan helper from this source tree.
 #
 # Copyright (C) 2026 Krish Kowli
 # Licensed under the GNU General Public License v3.0 or later. See LICENSE.
 #
-# This is the build the Oriel app's release script does for the helper,
+# This is the build the Attimo app's release script does for the helper,
 # without the rest of the app: compile the one product, strip the debug map,
-# sign it as com.localnook.app.fan-helper with the hardened runtime and no
+# sign it as app.attimo.mac.fan-helper with the hardened runtime and no
 # entitlements, and check the result. Requires macOS 15 or later and a Swift
 # 6.2 toolchain (Xcode Command Line Tools are enough). No network access, no
 # package dependencies, and no use of sudo: nothing here installs anything.
@@ -17,7 +17,7 @@
 #   ./build-helper.sh --debug            # debug configuration
 #   ./build-helper.sh --sign "<identity>"
 #       sign with a code-signing identity from your keychain instead of ad hoc
-#       (or set LOCALNOOK_SIGN_IDENTITY). The helper serves only an app of the
+#       (or set ATTIMO_SIGN_IDENTITY). The helper serves only an app of the
 #       same signer (one certificate, or one Developer ID team); an ad-hoc helper
 #       builds and passes its self-test but never listens (see README.md).
 #   ./build-helper.sh --out DIR          # where the result goes (default ./build)
@@ -31,15 +31,15 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT"
 
 # The launchd label, Mach service name and signing identifier: one name
-# (Sources/LocalNookSMC/FanControlProtocol.swift, FanHelperIdentity).
-HELPER_LABEL="com.localnook.app.fan-helper"
-PRODUCT="LocalNookFanHelper"
+# (Sources/AttimoSMC/FanControlProtocol.swift, FanHelperIdentity).
+HELPER_LABEL="app.attimo.mac.fan-helper"
+PRODUCT="AttimoFanHelper"
 
 CONFIG="release"
 ARCH="arm64"
 OUT="$ROOT/build"
 JOBS=""
-SIGN_IDENTITY="${LOCALNOOK_SIGN_IDENTITY:--}"
+SIGN_IDENTITY="${ATTIMO_SIGN_IDENTITY:--}"
 RUN_SELF_TEST=0
 TIMESTAMP=0
 

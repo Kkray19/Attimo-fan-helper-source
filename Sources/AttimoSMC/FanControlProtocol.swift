@@ -1,6 +1,6 @@
 //
 //  FanControlProtocol.swift
-//  LocalNook
+//  Attimo
 //
 //  Copyright (C) 2026 Krish Kowli
 //  Licensed under the GNU General Public License v3.0 or later. See LICENSES/GPL-3.0-or-later.txt.
@@ -39,28 +39,28 @@
 //
 
 import Foundation
-// The helper's sources import LocalNookSMC and nothing else, so what LocalNookShared
+// The helper's sources import AttimoSMC and nothing else, so what AttimoShared
 // holds (the code-signing pin, the sleep hold's messages, the wire) reaches them
 // through here, and the helper's own files stay exactly as they were.
-@_exported import LocalNookShared
+@_exported import AttimoShared
 
 // MARK: - Identity
 
 public enum FanHelperIdentity {
     /// launchd label, Mach service name and signing identifier, all one.
-    public static let label = "com.localnook.app.fan-helper"
-    public static let appIdentifier = "com.localnook.app"
-    public static let installedBinary = "/Library/PrivilegedHelperTools/com.localnook.app.fan-helper"
-    public static let installedPlist = "/Library/LaunchDaemons/com.localnook.app.fan-helper.plist"
-    public static let lockPath = "/var/run/localnook-fan-control.lock"
-    public static let markerPath = "/var/run/localnook-fan-control.active"
+    public static let label = "app.attimo.mac.fan-helper"
+    public static let appIdentifier = "app.attimo.mac"
+    public static let installedBinary = "/Library/PrivilegedHelperTools/app.attimo.mac.fan-helper"
+    public static let installedPlist = "/Library/LaunchDaemons/app.attimo.mac.fan-helper.plist"
+    public static let lockPath = "/var/run/attimo-fan-control.lock"
+    public static let markerPath = "/var/run/attimo-fan-control.active"
     public static let vorssaintMarkerPath = "/var/run/vorssaint-fan-control.active"
     /// The sleep hold's record (SleepHoldController): written, root's and
     /// private, before the helper first sets SleepDisabled, and removed only
     /// once it reads 0 again. Beside the helper rather than in /var/run,
     /// which a boot clears — SleepDisabled survives one, so the record must
     /// too. launchd keeps the helper running while it exists.
-    public static let sleepHoldRecordPath = "/Library/PrivilegedHelperTools/com.localnook.app.fan-helper.sleep-hold"
+    public static let sleepHoldRecordPath = "/Library/PrivilegedHelperTools/app.attimo.mac.fan-helper.sleep-hold"
     /// Bumped whenever the helper's behavior or this protocol changes. The
     /// app refuses a helper reporting any other revision and offers
     /// "Update helper" instead of sending it anything.
@@ -69,7 +69,13 @@ public enum FanHelperIdentity {
     /// ended.
     /// 3 (2026-10-06): the sleep hold ("Keep running with the lid closed"),
     /// its `sleepHold` call, its record and the job's RunAtLoad.
-    /// The number itself lives in LocalNookShared, the owner's own module,
+    /// 4 (2026-11-18): the Attimo rename. The label, Mach service, signing
+    /// identifier and log subsystem became `app.attimo.mac.fan-helper`
+    /// (formerly `com.localnook.app.fan-helper`), the app it serves
+    /// `app.attimo.mac`, the record and run files followed the label; no
+    /// message changed. An app installing revision 4 removes the
+    /// revision-3 job; the helper itself knows nothing of the old name.
+    /// The number itself lives in AttimoShared, the owner's own module,
     /// because the app reads it too (GPL boundary, 2026-10-08).
     public static let revision = HelperWire.revision
     /// Largest request or reply either side will decode.
@@ -135,10 +141,10 @@ public enum FanOwner: String, Codable, Sendable {
     /// The firmware's own control.
     case system
     case thisConnection
-    /// Another LocalNook connection — a second copy, or one left from before
+    /// Another Attimo connection — a second copy, or one left from before
     /// a relaunch.
-    case localNookOtherConnection
-    /// Something that is not LocalNook has a fan out of automatic mode.
+    case attimoOtherConnection = "localNookOtherConnection"
+    /// Something that is not Attimo has a fan out of automatic mode.
     case otherApp
 }
 
@@ -190,7 +196,7 @@ public struct FanHelperStatus: Codable, Sendable, Equatable {
 }
 
 /// The wire format: JSON, capped at `FanHelperIdentity.maxPayloadBytes`. The
-/// encoding itself is LocalNookShared's `HelperWire` (the app speaks it
+/// encoding itself is AttimoShared's `HelperWire` (the app speaks it
 /// too); this keeps the helper's own call sites as they were.
 public enum FanWire {
     /// The JSON for `value`, or nil if it would exceed the cap.

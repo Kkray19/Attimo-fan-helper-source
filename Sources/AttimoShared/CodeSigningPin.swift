@@ -1,9 +1,9 @@
 //
 //  CodeSigningPin.swift
-//  LocalNook
+//  Attimo
 //
 //  Copyright (C) 2026 Krish Kowli
-//  Licensed under the MIT License. See LICENSES/MIT-LocalNookShared.txt.
+//  Licensed under the MIT License. See LICENSES/MIT-AttimoShared.txt.
 //
 //  Moved from LocalNookSMC to LocalNookShared (GPL boundary, 2026-10-08):
 //  the owner's own code, linked by the app and by the root helper, unchanged
@@ -24,13 +24,13 @@
 //    "LocalNook Developer" one the betas use, or an Apple Development one):
 //    the SHA-1 of that very leaf,
 //
-//        identifier "com.localnook.app" and certificate leaf = H"<sha1>"
+//        identifier "app.attimo.mac" and certificate leaf = H"<sha1>"
 //
 //  - A Developer ID Application certificate: its team, in the designated
 //    requirement codesign writes for every Developer ID app (`codesign -d
 //    -r-` prints it for any of them),
 //
-//        identifier "com.localnook.app" and anchor apple generic
+//        identifier "app.attimo.mac" and anchor apple generic
 //        and certificate 1[field.1.2.840.113635.100.6.2.6] exists
 //        and certificate leaf[field.1.2.840.113635.100.6.1.13] exists
 //        and certificate leaf[subject.OU] = "<team>"

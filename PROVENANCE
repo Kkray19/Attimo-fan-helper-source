@@ -1,27 +1,27 @@
-Oriel fan helper (formerly LocalNook): where this source tree came from
+Attimo fan helper (formerly Oriel's, and before that LocalNook's): where this source tree came from
 
-Repository commit:   55fffa2774aab19d6c09155769f6326865892519
-Commit date:         2026-11-18T14:42:11-05:00
-Commit subject:      0.5.3 release prep: VERSION 0.5.3, CHANGELOG, MANUAL_CHECKS 93
+Repository commit:   435a07b8b1337390c9a42f0deeedba0403684553
+Commit date:         2026-11-19T14:29:06-05:00
+Commit subject:      Helper source README: Attimo's version numbers began again at 0.1.0 too, and the tags tell the three name lines apart
 Tagged:              (no tag)
-Oriel version:       0.5.3 (the VERSION file at that commit; not a LocalNook number: Oriel's numbering began again at 0.1.0)
-Helper wire revision: 3 (Sources/LocalNookShared/HelperWire.swift)
+Attimo version:      0.1.0 (the VERSION file at that commit; not an Oriel or LocalNook number: Attimo's numbering began again at 0.1.0)
+Helper wire revision: 4 (Sources/AttimoShared/HelperWire.swift)
 
 Every file in this tree is a tracked file of that commit, byte for byte, except
 the ones the tool wrote: Package.swift, PROVENANCE, LICENSE (a copy of
 LICENSES/GPL-3.0-or-later.txt), .gitignore and MANIFEST.sha256.
 
 Where each part comes from (repository path -> path in this tree):
-  Sources/LocalNookFanHelper/                       -> Sources/LocalNookFanHelper/
-  Sources/LocalNookSMC/                             -> Sources/LocalNookSMC/
-  Sources/LocalNookShared/                          -> Sources/LocalNookShared/
-  Resources/com.localnook.app.fan-helper.plist      -> Resources/com.localnook.app.fan-helper.plist
-  Sources/LocalNook/Vendor/ElevatedWindowSpace.swift -> mpl/ElevatedWindowSpace.swift
+  Sources/AttimoFanHelper/                       -> Sources/AttimoFanHelper/
+  Sources/AttimoSMC/                             -> Sources/AttimoSMC/
+  Sources/AttimoShared/                          -> Sources/AttimoShared/
+  Resources/app.attimo.mac.fan-helper.plist         -> Resources/app.attimo.mac.fan-helper.plist
+  Sources/Attimo/Vendor/ElevatedWindowSpace.swift -> mpl/ElevatedWindowSpace.swift
   MPL-2.0.txt                                       -> mpl/MPL-2.0.txt
   Package.swift (the three targets' declarations)   -> Package.swift (generated)
   LICENSES/                                         -> LICENSES/ (and LICENSE, a copy of the GPL text)
   scripts/helper-source/{README.md,NOTICE,build-helper.sh,mpl-README.md}
                                                     -> README.md, NOTICE, build-helper.sh, mpl/README.md
 
-Made by: scripts/make-helper-source.sh --commit 55fffa2774aab19d6c09155769f6326865892519
+Made by: scripts/make-helper-source.sh --commit 435a07b8b1337390c9a42f0deeedba0403684553
 A tree made from the same commit has the same MANIFEST.sha256.
